@@ -1,3 +1,7 @@
+// Fichier de départ pour créer un plugin MicroManager
+// Les @Override correspondent aux méthodes des interfaces à redéfinir obligatoirement
+// C'est une ébauche, il y a sûrement des modifications à faire
+
 import org.micromanager.Studio;
 import org.micromanager.data.ProcessorPlugin;
 import org.micromanager.PropertyMap;
@@ -12,7 +16,7 @@ import org.scijava.plugin.SciJavaPlugin;
 public class LiveSPTPlugin implements ProcessorPlugin, SciJavaPlugin {
 	public static final String menuName = "LiveSPT";
 	private Studio app;
-  // Il manque sûrement des attributs
+	// Il manque sûrement des attributs
 	
 	
 	@Override
@@ -31,22 +35,22 @@ public class LiveSPTPlugin implements ProcessorPlugin, SciJavaPlugin {
 	}
 	
 	@Override
-    public String getName() {
-        return menuName;
-    }
+    	public String getName() {
+        	return menuName;
+    	}
 
-    @Override
-    public String getHelpText() {
-        return ""; // Je sais pas quoi mettre
-    }
+    	@Override
+    	public String getHelpText() {
+        	return ""; // Je sais pas quoi mettre
+    	}	
 
-    @Override
-    public String getVersion() {
-        return "0.1";
-    }
+    	@Override
+    	public String getVersion() {
+        	return "0.1";
+    	}
 
-    @Override
-    public String getCopyright() {
-        return ""; // Je sais pas quoi mettre non plus
-    }
+    	@Override
+    	public String getCopyright() {
+        	return ""; // Je sais pas quoi mettre non plus
+    	}
 }
