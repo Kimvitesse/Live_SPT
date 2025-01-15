@@ -14,7 +14,9 @@ import org.micromanager.data.ProcessorContext;
 // Cette classe implémente le traitement d'image
 public class LiveSPTProcessor implements Processor {
     // Attributs
-    // private List<Spot> spots // type de retour du LoGDetector
+    // private List<Spot> spots // attribut qui permet de stocker les spots des images
+    
+
 
     // Constructeur(s)
 
@@ -32,5 +34,11 @@ public class LiveSPTProcessor implements Processor {
 
 
         context.outputImage(image); // rend l'image pour les processeurs suivants
+    }
+
+    public void FindSpot() {
+    }
+
+    public void Tracker() {
     }
 }
