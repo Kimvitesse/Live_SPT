@@ -10,11 +10,13 @@ import org.micromanager.data.Processor;
 import org.micromanager.data.Image;
 import org.micromanager.data.ProcessorContext;
 
+import fiji.plugin.trackmate.SpotCollection;
+
 
 // Cette classe implémente le traitement d'image
 public class LiveSPTProcessor implements Processor {
     // Attributs
-    // private List<Spot> spots // attribut qui permet de stocker les spots des images
+    private SpotCollection spots // attribut qui permet de stocker les spots des images
     
 
 
