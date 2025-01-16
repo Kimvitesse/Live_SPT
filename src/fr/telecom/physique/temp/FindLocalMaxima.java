@@ -183,8 +183,8 @@ public class FindLocalMaxima {
                       ( (iProc.getPixel(mi - n , mj - n) + iProc.getPixel(mi -n, mj + n) +
                        iProc.getPixel(mi + n, mj  - n) + iProc.getPixel(mi + n, mj + n)) / 4) ) 
                     > threshold))
-              Spot point = new Spot(mi,mj,0,R,Q);            // R radius et Q quality à modifier ????????????????????????
-              maxima.add(point, 1);                     // on met les spots de la nouvelle image dans la frame 1 (penser à mettre ceux de l'ancienne image dans la frame 0)
+            {Spot point = new Spot(mi,mj,0,R,Q);            // R radius et Q quality à modifier ????????????????????????
+              maxima.add(point, 1);   }                  // on met les spots de la nouvelle image dans la frame 1 (penser à mettre ceux de l'ancienne image dans la frame 0)
          }
       }
 
