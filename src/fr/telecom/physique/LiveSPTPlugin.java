@@ -1,8 +1,8 @@
 // Projet LiveSPT
 // Auteurs : Yzouille, Kimvitesse, Sananas03, Poissondavril03, FavreIndustries
 // Date de création : 03/12/2024
-// Date de modification : 12/01/2025
-// Version : 0.2
+// Date de modification : 21/01/2025
+// Version : 0.3
 
 // Fichier de départ pour créer un plugin MicroManager
 // Les @Override correspondent aux méthodes des interfaces à redéfinir obligatoirement
@@ -32,7 +32,7 @@ public class LiveSPTPlugin implements ProcessorPlugin {
 	
 	@Override
 	public ProcessorFactory createFactory(PropertyMap settings) {
-		return new LiveSPTFactory(settings);
+		return new LiveSPTFactory(settings, app);
 	}
 	
 	@Override
