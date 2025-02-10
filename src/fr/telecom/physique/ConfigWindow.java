@@ -26,15 +26,15 @@ public class ConfigWindow extends JDialog {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new GridLayout(4, 2));
 
-        add(new JLabel("Taille ROI :"));
+        add(new JLabel("Taille ROI (pix) :"));
         roiField = new JTextField();
         add(roiField);
 
-        add(new JLabel("Distance min entre particules :"));
+        add(new JLabel("Distance min entre particules (pix) :"));
         minDistanceField = new JTextField();
         add(minDistanceField);
 
-        add(new JLabel("Seuil de luminosité :"));
+        add(new JLabel("Seuil de luminosité (/65 535) :"));
         thresholdField = new JTextField();
         add(thresholdField);
 
