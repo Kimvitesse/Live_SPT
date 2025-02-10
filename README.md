@@ -14,7 +14,7 @@ LiveSPTPlugin.jar
 
 Open the plugin on Micro-Manager by searching in *Plugin > On the fly image processing*.
 
-Set the parameters with the button *Configur* and let's run your experience ! 
+Set the parameters with the button *Configure* and let's run your experience ! 
 
 
 ## Contributing
