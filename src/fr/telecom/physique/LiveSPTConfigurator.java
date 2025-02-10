@@ -23,10 +23,9 @@ public class LiveSPTConfigurator implements ProcessorConfigurator {
         // Ce constructeur est appelé à chaque fois qu'une instance du plugin est ajouté à la pipeline
         
         System.out.println("Configurateur appelé");
-        PropertyMap.Builder builder = pm.copy();    // construction d'un property_map vide
         frame = new ConfigWindow();     
         // attendre que la fenêtre soit fermée et récupérer les valeurs
-        PropertyMap property_map = ConfigWindow.getconfig();
+        PropertyMap property_map = frame.getConfig();
 
         // Pas besoin normalement
         // Cherche la valeur associée à la clé dans la PropertyMap
