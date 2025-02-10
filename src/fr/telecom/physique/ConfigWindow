@@ -4,7 +4,7 @@
 // Date de modification : 10/02/2025
 // Version : 0.2
 
-package fr.telecom.physique
+package fr.telecom.physique;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,10 +52,10 @@ public class ConfigWindow extends JFrame {
     }
 
     private void saveConfig() {
-        config = new DefaultPropertyMap.Builder()
-                .putInteger("RoiSize", roiField.getText())
-                .putInteger("MinDistToOtherMax", minDistanceField.getText())
-                .putInteger("threshold", thresholdField.getText())
+        config = config.copyBuilder()
+                .putInteger("RoiSize", Integer.parseInt(roiField.getText()))
+                .putInteger("MinDistToOtherMax", Integer.parseInt(minDistanceField.getText()))
+                .putInteger("Threshold", Integer.parseInt(thresholdField.getText()))
                 .build();
     }
 
