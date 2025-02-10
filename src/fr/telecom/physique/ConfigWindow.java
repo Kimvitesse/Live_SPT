@@ -2,7 +2,7 @@
 // Auteurs : Yzouille, Kimvitesse, Sananas03, Poissondavril03, FavreIndustries
 // Date de création : 10/02/2025
 // Date de modification : 10/02/2025
-// Version : 0.2
+// Version : 0.3
 
 package fr.telecom.physique;
 
@@ -11,29 +11,30 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.micromanager.PropertyMap;
-import org.micromanager.internal.propertymap.DefaultPropertyMap;
 
-public class ConfigWindow extends JFrame {
+public class ConfigWindow extends JDialog {
     private JTextField roiField;
     private JTextField minDistanceField;
     private JTextField thresholdField;
     private PropertyMap config;
 
-    public ConfigWindow() {
+    public ConfigWindow(JFrame parent, PropertyMap conf) {
+        super(parent, true);
+        config = conf;
         setTitle("Configuration");
         setSize(550, 200);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new GridLayout(4, 2));
 
-        add(new JLabel("Taille ROI (pixels) :"));
+        add(new JLabel("Taille ROI :"));
         roiField = new JTextField();
         add(roiField);
 
-        add(new JLabel("Distance min entre particules (pixels):"));
+        add(new JLabel("Distance min entre particules :"));
         minDistanceField = new JTextField();
         add(minDistanceField);
 
-        add(new JLabel("Seuil de luminosité (sur 65 535) :"));
+        add(new JLabel("Seuil de luminosité :"));
         thresholdField = new JTextField();
         add(thresholdField);
 
@@ -52,11 +53,16 @@ public class ConfigWindow extends JFrame {
     }
 
     private void saveConfig() {
-        config = config.copyBuilder()
+        try {
+            config = config.copyBuilder()
                 .putInteger("RoiSize", Integer.parseInt(roiField.getText()))
                 .putInteger("MinDistToOtherMax", Integer.parseInt(minDistanceField.getText()))
                 .putInteger("Threshold", Integer.parseInt(thresholdField.getText()))
                 .build();
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Veuillez entrer des entiers", "Erreur", JOptionPane.ERROR_MESSAGE);
+        }
+        System.out.println("Taille de la map config : " + config.size());
     }
 
     public PropertyMap getConfig() {
