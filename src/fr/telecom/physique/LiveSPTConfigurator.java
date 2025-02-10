@@ -1,8 +1,8 @@
 // Projet LiveSPT
 // Auteurs : Yzouille, Kimvitesse, Sananas03, Poissondavril03, FavreIndustries
 // Date de création : 08/12/2024
-// Date de modification : 12/01/2025
-// Version : 0.2
+// Date de modification : 10/02/2025
+// Version : 0.3
 
 package fr.telecom.physique;
 
@@ -15,14 +15,26 @@ import org.micromanager.PropertyMap;
 public class LiveSPTConfigurator implements ProcessorConfigurator {
     // Attributs
     private PropertyMap property_map;
+    private ConfigWindow frame;
 
     
     // Constructeur(s)
     public LiveSPTConfigurator(PropertyMap pm) {
-        // À modifier
         // Ce constructeur est appelé à chaque fois qu'une instance du plugin est ajouté à la pipeline
-        property_map = pm;
+        
         System.out.println("Configurateur appelé");
+        PropertyMap.Builder builder = pm.copy();    // construction d'un property_map vide
+        frame = new ConfigWindow();     
+        // attendre que la fenêtre soit fermée et récupérer les valeurs
+        PropertyMap property_map = ConfigWindow.getconfig();
+
+        // Pas besoin normalement
+        // Cherche la valeur associée à la clé dans la PropertyMap
+        // Si cette clé n'existe pas, la valeur "default_value" est retournée à la place (pour éviter une erreur)
+        // int RoiSize = property_map.getInteger("RoiSize", 80);
+        // int minDistance = property_map.getInteger("minDistToOtherMax", 2);
+        // int threshold = property_map.getInteger("threshold", 40000);
+        
     }
 
 
@@ -34,7 +46,7 @@ public class LiveSPTConfigurator implements ProcessorConfigurator {
 
     @Override
     public void showGUI() {
-        // À modifier
+        frame.setVisible(true);
         return;
     }
 
