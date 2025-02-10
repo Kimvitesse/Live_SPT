@@ -1,8 +1,8 @@
 // Projet LiveSPT
 // Auteurs : Yzouille, Kimvitesse, Sananas03, Poissondavril03, FavreIndustries
 // Date de création : 08/12/2024
-// Date de modification : 21/01/2025
-// Version : 0.5
+// Date de modification : 10/02/2025
+// Version : 0.6
 
 package fr.telecom.physique;
 
@@ -15,8 +15,10 @@ import org.micromanager.data.Image;
 import org.micromanager.data.ProcessorContext;
 import org.micromanager.PropertyMap;
 import org.micromanager.Studio;
+import org.micromanager.display.overlay.Overlay;
+import org.micromanager.display.overlay.AbstractOverlay;
 
-import ij.process.ShortProcessor;
+import ij.process.ImageProcessor;
 import ij.gui.Roi;
 import ij.gui.Line;
 
@@ -31,9 +33,9 @@ public class LiveSPTProcessor implements Processor {
     private long processingTime;
     private ConcurrentSkipListMap< Integer, Spot > trajectories = new ConcurrentSkipListMap<>();
     private int nbIter = -1;
-    private int RoiSize = 80; // à régler avec settings
-    private int minDistToOtherMax = 2; // à régler avec settings
-    private int threshold = 40000; // à régler avec settings
+    private int roiSize;
+    private int minDistToOtherMax;
+    private int threshold;
     private int height;
     private int width;
     private Roi zone;
@@ -48,6 +50,10 @@ public class LiveSPTProcessor implements Processor {
         super();
         settings = pm;
         this.app = app;
+        roiSize = settings.getInteger("RoiSize", 80); // Valeur à récupérer, valeur par défaut
+        minDistToOtherMax = settings.getInteger("MinDistToOtherMax", 2);
+        threshold = settings.getInteger("Threshold", 35000);
+        System.out.println("Taille de la map : " + pm.size());
     }
 
     // Méthodes
@@ -62,7 +68,7 @@ public class LiveSPTProcessor implements Processor {
         nbIter++;
 
         // Tant qu'on ne trouve pas de spots dans la ROI initiale
-        if (spots.npoints == 0 && trajectoryHasNotBegun)
+        if (trajectoryHasNotBegun && spots.npoints == 0)
         {
             if (nbIter == 0) // Première itération, on initialise les attributs
             {
@@ -70,13 +76,11 @@ public class LiveSPTProcessor implements Processor {
                 width = image.getWidth();
                 
                 // Initialisation de la ROI
-                //zone = new Roi((width - RoiSize)/2, (height - RoiSize)/2, RoiSize, RoiSize); // initialisation officielle
-                zone = new Roi(246, 246, RoiSize, RoiSize); // sélection manuelle
+                zone = new Roi((width - roiSize)/2, (height - roiSize)/2, roiSize, roiSize);
             }
             
             // Création de l'objet adapté pour la traitement des images
-            ShortProcessor img = new ShortProcessor(width, height);
-            img.setPixels(image.getRawPixels());
+            ImageProcessor img = app.data().ij().createProcessor(image);
             
             // Tracé de la ROI
             zone.drawPixels(img);
@@ -90,7 +94,7 @@ public class LiveSPTProcessor implements Processor {
             {
                 trajectories.put(trajectoryFrame, new Spot(spots.xpoints[0], spots.ypoints[0]));
                 System.out.println("First spot found !");
-                RoiSize = 20;
+                roiSize = 20;
                 trajectoryHasNotBegun = false;
             }
 
@@ -110,36 +114,13 @@ public class LiveSPTProcessor implements Processor {
         long end;
 
         // Création de l'objet pour la traitement de l'image
-        ShortProcessor img = new ShortProcessor(512, 512);
-        img.setPixels(image.getRawPixels());
-        
+        ImageProcessor img = app.data().ij().createProcessor(image);
+
+
         // Détection des spots avec ALICA
-        Polygon newSpots = FindLocalMaxima.FindMax(img, zone, minDistToOtherMax, threshold, FindLocalMaxima.FilterType.NONE);
+        Polygon newSpots = FindLocalMaxima.FindMax(img, zone, minDistToOtherMax, threshold, FindLocalMaxima.FilterType.NONE); // Tester filtres
 
-
-        // Filtrage des doublons créés par la détection
-        Polygon realSpots = new Polygon();
-        if (newSpots.npoints > 1) // uniquement si + de 1 spots sont détectés
-        {
-            realSpots.addPoint(newSpots.xpoints[0], newSpots.ypoints[0]);
-            for (int i = 1; i < newSpots.npoints; i++)
-            {
-                if (newSpots.xpoints[i] <= newSpots.xpoints[i - 1] + 1 && newSpots.xpoints[i] >= newSpots.xpoints[i - 1] - 1)
-                {
-                    if (newSpots.ypoints[i] <= newSpots.ypoints[i - 1] + 1 && newSpots.ypoints[i] >= newSpots.ypoints[i - 1] - 1)
-                    {
-                        continue;
-                    }
-                }
-                realSpots.addPoint(newSpots.xpoints[i], newSpots.ypoints[i]);
-            }
-        }
-        else 
-        {
-            realSpots = newSpots;
-        }
-
-        System.out.println("Number of spots found : " + realSpots.npoints);
+        System.out.println("Number of spots found : " + newSpots.npoints);
 
         
         // -----------------------------------------
@@ -148,9 +129,9 @@ public class LiveSPTProcessor implements Processor {
 
         
         // Plus proches voisins (multithreading possible mais pas très intéressant)
-        if (realSpots.npoints == 0) // Si on a pas trouvé de spots
+        if (newSpots.npoints == 0) // Si on a pas trouvé de spots
         {
-            spots = realSpots;
+            spots = newSpots;
 
             end = System.currentTimeMillis();
             processingTime = end - start;
@@ -158,7 +139,7 @@ public class LiveSPTProcessor implements Processor {
             context.outputImage(image);
             return;
         }
-        if (realSpots.npoints == 1) // Si on a trouvé qu'un seul spot dans la ROI
+        if (newSpots.npoints == 1) // Si on a trouvé qu'un seul spot dans la ROI
         {
             // Tracé de la trajectoire (multithreading possible et intéressant pour les trajectoires longues)
             for (int i = 1; i <= trajectoryFrame; i++)
@@ -167,20 +148,23 @@ public class LiveSPTProcessor implements Processor {
                 line.drawPixels(img);
             }
             Spot previous = trajectories.get(trajectoryFrame);
-            Line line = new Line(previous.getX(), previous.getY(), realSpots.xpoints[0], realSpots.ypoints[0]);
+            Line line = new Line(previous.getX(), previous.getY(), newSpots.xpoints[0], newSpots.ypoints[0]);
             line.drawPixels(img);
+            
+            //Overlay overlay = new AbstractOverlay();
+            //app.live().getDisplay().addOverlay();
 
             // Mise à jour de la trajectoire
             trajectoryFrame++;
-            trajectories.put(trajectoryFrame, new Spot(realSpots.xpoints[0], realSpots.ypoints[0]));
+            trajectories.put(trajectoryFrame, new Spot(newSpots.xpoints[0], newSpots.ypoints[0]));
             
             // Mise à jour de la région d'intérêt
-            zone = new Roi(realSpots.xpoints[0] - RoiSize/2, realSpots.ypoints[0] - RoiSize/2, RoiSize, RoiSize);
+            zone = new Roi(newSpots.xpoints[0] - roiSize/2, newSpots.ypoints[0] - roiSize/2, roiSize, roiSize);
             zone.drawPixels(img);
             image = app.data().ij().createImage(img, image.getCoords(), image.getMetadata());
             
             // Stockage pour l'itération suivante
-            spots = realSpots;
+            spots = newSpots;
             
             // Mesure du temps de calcul
             end = System.currentTimeMillis();
@@ -195,7 +179,7 @@ public class LiveSPTProcessor implements Processor {
         // Si on a trouvé plusieurs spots dans la ROI
 
         // Création d'un vecteur de distances
-        double distances[] = new double[realSpots.npoints];
+        double distances[] = new double[newSpots.npoints];
         
         // Stockage du spot trouvé à l'itération précédente pour limiter les appels de méthodes pour gagner du temps
         Spot previous = trajectories.get(trajectoryFrame);
@@ -203,9 +187,9 @@ public class LiveSPTProcessor implements Processor {
         int y = previous.getY();
         
         // Calcul de chaque distance entre le spot de l'itération précédente et les nouveaux trouvés
-        for (int i = 0; i < realSpots.npoints; i++)
+        for (int i = 0; i < newSpots.npoints; i++)
         {
-            double dist = Math.sqrt((x - realSpots.xpoints[i])*(x - realSpots.xpoints[i]) + (y - realSpots.ypoints[i])*(y - realSpots.ypoints[i]));
+            double dist = Math.sqrt((x - newSpots.xpoints[i])*(x - newSpots.xpoints[i]) + (y - newSpots.ypoints[i])*(y - newSpots.ypoints[i]));
             distances[i] = dist;
         }
 
@@ -221,15 +205,15 @@ public class LiveSPTProcessor implements Processor {
             Line line = new Line(trajectories.get(i - 1).getX(), trajectories.get(i - 1).getY(), trajectories.get(i).getX(), trajectories.get(i).getY());
             line.drawPixels(img);
         }
-        Line line = new Line(x, y, realSpots.xpoints[min], realSpots.ypoints[min]);
+        Line line = new Line(x, y, newSpots.xpoints[min], newSpots.ypoints[min]);
         line.drawPixels(img);
 
         // Mise à jour de la trajectoire
         trajectoryFrame++;
-        trajectories.put(trajectoryFrame, new Spot(realSpots.xpoints[min], realSpots.ypoints[min]));
+        trajectories.put(trajectoryFrame, new Spot(newSpots.xpoints[min], newSpots.ypoints[min]));
         
         // Mise à jour et tracé de la ROI
-        zone = new Roi(realSpots.xpoints[min] - RoiSize/2, realSpots.ypoints[min] - RoiSize/2, RoiSize, RoiSize);
+        zone = new Roi(newSpots.xpoints[min] - roiSize/2, newSpots.ypoints[min] - roiSize/2, roiSize, roiSize);
         zone.drawPixels(img);
         image = app.data().ij().createImage(img, image.getCoords(), image.getMetadata());
 
@@ -239,7 +223,7 @@ public class LiveSPTProcessor implements Processor {
         System.out.println("Total processing time : " + processingTime + " ms");
 
         // Stockage
-        spots = realSpots;
+        spots = newSpots;
 
         // Rendu de l'image à la pipeline
         context.outputImage(image);
