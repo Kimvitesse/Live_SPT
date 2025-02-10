@@ -1,0 +1,52 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class ConfigWindow extends JFrame {
+    private JTextField roiField;
+    private JTextField distanceField;
+    private JTextField thresholdField;
+
+    public ConfigWindow() {
+        setTitle("Configuration du Plugin Live_SPT");
+        setSize(300, 200);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLayout(new GridLayout(4, 2));
+
+        // Labels et champs de texte
+        add(new JLabel("Taille du ROI :"));
+        roiField = new JTextField();
+        add(roiField);
+
+        add(new JLabel("Distance min entre particules :"));
+        distanceField = new JTextField();
+        add(distanceField);
+
+        add(new JLabel("Seuil de luminosité :"));
+        thresholdField = new JTextField();
+        add(thresholdField);
+
+        // Bouton Valider
+        JButton validateButton = new JButton("Valider");
+        add(validateButton);
+
+        validateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int roiSize = Integer.parseInt(roiField.getText());
+                int minDistance = Integer.parseInt(distanceField.getText());
+                int threshold = Integer.parseInt(thresholdField.getText());
+                
+                System.out.println("Paramètres : ROI=" + roiSize + ", Distance=" + minDistance + ", Seuil=" + threshold);
+                dispose(); // Fermer la fenêtre après validation
+            }
+        });
+
+        setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(ConfigWindow::new);
+    }
+}
