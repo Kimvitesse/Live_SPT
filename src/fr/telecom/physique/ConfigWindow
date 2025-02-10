@@ -1,52 +1,65 @@
+// Projet LiveSPT
+// Auteurs : Yzouille, Kimvitesse, Sananas03, Poissondavril03, FavreIndustries
+// Date de création : 10/02/2025
+// Date de modification : 10/02/2025
+// Version : 0.2
+
+package fr.telecom.physique
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import org.micromanager.PropertyMap;
+import org.micromanager.internal.propertymap.DefaultPropertyMap;
 
 public class ConfigWindow extends JFrame {
     private JTextField roiField;
-    private JTextField distanceField;
+    private JTextField minDistanceField;
     private JTextField thresholdField;
+    private PropertyMap config;
 
     public ConfigWindow() {
-        setTitle("Configuration du Plugin Live_SPT");
+        setTitle("Configuration");
         setSize(300, 200);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new GridLayout(4, 2));
 
-        // Labels et champs de texte
-        add(new JLabel("Taille du ROI :"));
+        add(new JLabel("Taille ROI :"));
         roiField = new JTextField();
         add(roiField);
 
         add(new JLabel("Distance min entre particules :"));
-        distanceField = new JTextField();
-        add(distanceField);
+        minDistanceField = new JTextField();
+        add(minDistanceField);
 
         add(new JLabel("Seuil de luminosité :"));
         thresholdField = new JTextField();
         add(thresholdField);
 
-        // Bouton Valider
         JButton validateButton = new JButton("Valider");
         add(validateButton);
 
         validateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int roiSize = Integer.parseInt(roiField.getText());
-                int minDistance = Integer.parseInt(distanceField.getText());
-                int threshold = Integer.parseInt(thresholdField.getText());
-                
-                System.out.println("Paramètres : ROI=" + roiSize + ", Distance=" + minDistance + ", Seuil=" + threshold);
-                dispose(); // Fermer la fenêtre après validation
+                saveConfig();
+                dispose(); // Ferme la fenêtre après validation
             }
         });
 
         setVisible(true);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(ConfigWindow::new);
+    private void saveConfig() {
+        config = new DefaultPropertyMap.Builder()
+                .putInteger("RoiSize", roiField.getText())
+                .putInteger("MinDistToOtherMax", minDistanceField.getText())
+                .putInteger("threshold", thresholdField.getText())
+                .build();
+    }
+
+    public PropertyMap getConfig() {
+        return config;
     }
 }
