@@ -49,7 +49,7 @@ public class ConfigWindow extends JDialog {
             }
         });
 
-        setVisible(true);
+        setLocationRelativeTo(parent); // Centre la fenêtre de réglage
     }
 
     private void saveConfig() {
