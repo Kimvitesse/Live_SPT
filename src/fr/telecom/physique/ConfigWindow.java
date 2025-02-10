@@ -21,7 +21,7 @@ public class ConfigWindow extends JFrame {
 
     public ConfigWindow() {
         setTitle("Configuration");
-        setSize(300, 200);
+        setSize(600, 300);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new GridLayout(4, 2));
 
