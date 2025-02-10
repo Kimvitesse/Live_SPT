@@ -21,19 +21,19 @@ public class ConfigWindow extends JFrame {
 
     public ConfigWindow() {
         setTitle("Configuration");
-        setSize(600, 300);
+        setSize(550, 200);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new GridLayout(4, 2));
 
-        add(new JLabel("Taille ROI :"));
+        add(new JLabel("Taille ROI (pixels) :"));
         roiField = new JTextField();
         add(roiField);
 
-        add(new JLabel("Distance min entre particules :"));
+        add(new JLabel("Distance min entre particules (pixels):"));
         minDistanceField = new JTextField();
         add(minDistanceField);
 
-        add(new JLabel("Seuil de luminosité :"));
+        add(new JLabel("Seuil de luminosité (sur 65 535) :"));
         thresholdField = new JTextField();
         add(thresholdField);
 
