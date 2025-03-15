@@ -24,14 +24,12 @@ public class LiveSPTFactory implements ProcessorFactory {
         super();
         property_map = pm;
         this.app = app;
-        System.out.println("Usine appelée");
     }
 
 
     // Méthodes
     @Override
     public Processor createProcessor() {
-        System.out.println("Processeur créé");
         return new LiveSPTProcessor(property_map, app);
     }
 }
