@@ -43,14 +43,34 @@ public class SliderConfigWindow extends JDialog {
         add(ellipseThresholdSlider);
         add(ellipseThresholdLabel);
         
-        // Listener pour mettre à jour les labels en temps réel
+             // Listeners pour synchroniser les sliders et les champs texte
         detectionThresholdSlider.addChangeListener(e -> {
             detectionThreshold = detectionThresholdSlider.getValue();
-            detectionThresholdLabel.setText(String.valueOf(detectionThreshold));
+            detectionThresholdField.setText(String.valueOf(detectionThreshold));
         });
         ellipseThresholdSlider.addChangeListener(e -> {
             ellipseThreshold = ellipseThresholdSlider.getValue();
-            ellipseThresholdLabel.setText(String.valueOf(ellipseThreshold));
+            ellipseThresholdField.setText(String.valueOf(ellipseThreshold));
+        });
+        
+        detectionThresholdField.addActionListener(e -> {
+            try {
+                int value = Integer.parseInt(detectionThresholdField.getText());
+                detectionThreshold = Math.max(0, Math.min(65535, value));
+                detectionThresholdSlider.setValue(detectionThreshold);
+            } catch (NumberFormatException ex) {
+                detectionThresholdField.setText(String.valueOf(detectionThreshold));
+            }
+        });
+        
+        ellipseThresholdField.addActionListener(e -> {
+            try {
+                int value = Integer.parseInt(ellipseThresholdField.getText());
+                ellipseThreshold = Math.max(0, Math.min(65535, value));
+                ellipseThresholdSlider.setValue(ellipseThreshold);
+            } catch (NumberFormatException ex) {
+                ellipseThresholdField.setText(String.valueOf(ellipseThreshold));
+            }
         });
 
         // Bouton de validation
