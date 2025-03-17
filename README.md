@@ -1,6 +1,6 @@
 # Live Single Particle Tracking
 
-Live_SPTracking is a Micro-Manager plugin that can track particles on live mode within a selected area.
+Live_SPTracking is a Micro-Manager plugin that can track particles in 3D on live mode within a selected area.
 
 ## Installation
 
