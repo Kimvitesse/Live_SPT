@@ -1,8 +1,8 @@
 // Projet LiveSPT
 // Auteurs : Yzouille, Kimvitesse, Sananas03, Poissondavril03, FavreIndustries
 // Date de création : 10/02/2025
-// Date de modification : 15/03/2025
-// Version : 0.7
+// Date de modification : 17/03/2025
+// Version : 0.9
 
 package fr.telecom.physique;
 
@@ -14,15 +14,15 @@ import java.awt.event.ActionListener;
 import org.micromanager.PropertyMap;
 import org.micromanager.Studio;
 
-public class ConfigWindow extends JDialog {
+public class PluginConfigWindow extends JDialog {
     private JTextField roiField;
     private JTextField minDistanceField;
     private JTextField detectionThresholdField;
     private JTextField reducedRoiField;
     private JTextField initialRoiXField;
     private JTextField initialRoiYField;
-    private JTextField ellipseThresholdField;
-    private JTextField aField;
+    private JTextField axField;
+    private JTextField ayField;
     private JTextField bField;
     private JTextField dField;
     private JTextField cxField;
@@ -33,7 +33,7 @@ public class ConfigWindow extends JDialog {
     private Studio app;
     private PropertyMap config;
 
-    public ConfigWindow(JFrame parent, PropertyMap conf) {
+    public PluginConfigWindow(JFrame parent, PropertyMap conf) {
         super(parent, true);
         config = conf;
         setTitle("Configuration");
@@ -65,13 +65,13 @@ public class ConfigWindow extends JDialog {
         detectionThresholdField = new JTextField();
         add(detectionThresholdField);
 
-        add(new JLabel("Seuil de luminosité pour l'ellipse (/65 535) :"));
-        ellipseThresholdField = new JTextField();
-        add(ellipseThresholdField);
-
-        add(new JLabel("Coefficient de calibration A :"));
-        aField = new JTextField();
-        add(aField);
+        add(new JLabel("Coefficient de calibration Ax :"));
+        axField = new JTextField();
+        add(axField);
+        
+        add(new JLabel("Coefficient de calibration Ay :"));
+        ayField = new JTextField();
+        add(ayField);
 
         add(new JLabel("Coefficient de calibration B :"));
         bField = new JTextField();
@@ -128,8 +128,8 @@ public class ConfigWindow extends JDialog {
             Integer.parseInt(initialRoiYField.getText());
             Integer.parseInt(minDistanceField.getText());
             Integer.parseInt(detectionThresholdField.getText());
-            Integer.parseInt(ellipseThresholdField.getText());
-            Double.parseDouble(aField.getText());
+            Double.parseDouble(axField.getText());
+            Double.parseDouble(ayField.getText());
             Double.parseDouble(bField.getText());
             Double.parseDouble(dField.getText());
             Double.parseDouble(w0Field.getText());
@@ -155,8 +155,8 @@ public class ConfigWindow extends JDialog {
                 .putInteger("InitialRoiY", Integer.parseInt(initialRoiYField.getText()))
                 .putInteger("MinDistToOtherMax", Integer.parseInt(minDistanceField.getText()))
                 .putInteger("DetectionThreshold", Integer.parseInt(detectionThresholdField.getText()))
-                .putInteger("EllipseThreshold", Integer.parseInt(ellipseThresholdField.getText()))
-                .putDouble("A", Double.parseDouble(aField.getText()))
+                .putDouble("Ax", Double.parseDouble(axField.getText()))
+                .putDouble("Ay", Double.parseDouble(ayField.getText()))
                 .putDouble("B", Double.parseDouble(bField.getText()))
                 .putDouble("d", Double.parseDouble(dField.getText()))
                 .putDouble("w0", Double.parseDouble(w0Field.getText()))
@@ -168,7 +168,6 @@ public class ConfigWindow extends JDialog {
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Veuillez entrer des valeurs", "Erreur", JOptionPane.ERROR_MESSAGE);
         }
-        System.out.println("Taille de la map config : " + config.size());
     }
 
     public PropertyMap getConfig() {
