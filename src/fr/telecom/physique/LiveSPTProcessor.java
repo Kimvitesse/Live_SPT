@@ -801,18 +801,4 @@ public class LiveSPTProcessor implements Processor {
         conversionRatio = settings.getInteger("RealSize", 82);
         stageName = settings.getString("StageName", "PIZstage");
     }
-
-    /*private void setThresholds() {
-        SliderConfigWindow frame = new SliderConfigWindow(null, detectionThreshold, ellipseThreshold);
-        frame.setVisible(true);
-        
-        
-        // Image for ellipse threshold
-        ImageProcessor img = app.data().ij().createProcessor(image);
-        img.setThreshold((double)frame.ellipseThreshold, (double)UNSIGNED_SHORT_MAX_VALUE, ImageProcessor.NO_LUT_UPDATE);
-        ByteProcessor mask = img.createMask();
-        mask.fillOutside(zone);
-        image = app.data().ij().createImage(mask, image.getCoords(), image.getMetadata());
-        app.live().displayImage(image);
-    } */
 }
