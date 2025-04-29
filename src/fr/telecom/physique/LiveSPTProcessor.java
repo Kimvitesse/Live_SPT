@@ -72,12 +72,12 @@ public class LiveSPTProcessor implements Processor {
     private double Ax;
     private double Ay;
     private double B;
-    private double d; // 80
-    private double cx; // 200
-    private double cy; // -200
-    private double w0; // 1500
+    private double d;
+    private double cx;
+    private double cy;
+    private double w0;
     private String stageName;
-    public static double conversionRatio; // 82 µm pour 512 px
+    public static double conversionRatio;
     private double microscopeZPosition;
     public static int UNSIGNED_SHORT_MAX_VALUE = 65535;
     private LiveSPTConfigurator configurator;
