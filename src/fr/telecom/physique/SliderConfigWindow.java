@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import org.micromanager.Studio;
 
+/* Not yet in use */
 public class SliderConfigWindow extends JDialog {
     public int detectionThreshold;
     public int ellipseThreshold;
