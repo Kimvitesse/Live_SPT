@@ -138,7 +138,7 @@ public class LiveSPTProcessor implements Processor {
                 width = image.getWidth();
                 
                 // µm per pixels to convert to real coordinates
-                conversionRatio = 82.0/512;
+                conversionRatio = (double)conversionRatio/height;
                 
                 // Placing the ROI in the center
                 if (initialRoiX == -1)
@@ -175,10 +175,10 @@ public class LiveSPTProcessor implements Processor {
             spots = FindLocalMaxima.FindMax(img, zone, minDistToOtherMax, detectionThreshold, FindLocalMaxima.FilterType.NONE);
             app.getLogManager().logMessage("Number of spots found with ALICA: " + spots.npoints);
 
-            MaximumFinder maximumFinder = new MaximumFinder();
+            //MaximumFinder maximumFinder = new MaximumFinder();
             img.setRoi(zone);
-            spots = maximumFinder.getMaxima(img, detectionThreshold, true);
-            app.getLogManager().logMessage("Number of spots found with ImageJ : " + spots.npoints);
+            //spots = maximumFinder.getMaxima(img, detectionThreshold, true);
+            //app.getLogManager().logMessage("Number of spots found with ImageJ : " + spots.npoints);
 
             
             // Initialisation de trajectories
@@ -209,14 +209,20 @@ public class LiveSPTProcessor implements Processor {
                 trajectoryHasNotBegun = false;
             }
 
+            // Génération de l'image pour Micro-Manager
             image = app.data().ij().createImage(img, image.getCoords(), image.getMetadata());
             
+            // Rendu de l'image à la pipeline
             context.outputImage(image);
             return;
         }
 
         if (updateSettings())
         {
+            // Mise à jour du rapport de conversion
+            conversionRatio = (double)conversionRatio/height;
+            
+            // Rendu de l'image à la pipeline
             context.outputImage(image);
             return;
         }
@@ -229,6 +235,8 @@ public class LiveSPTProcessor implements Processor {
 
         app.getLogManager().logMessage("Appel n°"+ nbIter);
 
+        System.out.println("ratio : " + conversionRatio);
+
         // Mesure du temps de calcul
         long start = System.currentTimeMillis();
         long end;
@@ -236,17 +244,13 @@ public class LiveSPTProcessor implements Processor {
         // Création de l'objet pour la traitement de l'image
         ImageProcessor img = app.data().ij().createProcessor(image);
 
-        // Tracé de la ROI
-        //zone.drawPixels(img);
-
         // Détection des spots
         Polygon newSpots = FindLocalMaxima.FindMax(img, zone, minDistToOtherMax, detectionThreshold, FindLocalMaxima.FilterType.NONE);
         app.getLogManager().logMessage("Number of spots found with ALICA: " + newSpots.npoints);
-        //Polygon pol = new Polygon();
-        MaximumFinder maximumFinder = new MaximumFinder();
+        //MaximumFinder maximumFinder = new MaximumFinder();
         img.setRoi(zone);
-        newSpots = maximumFinder.getMaxima(img, detectionThreshold, true);
-        app.getLogManager().logMessage("Number of spots found with ImageJ : " + newSpots.npoints);
+        //newSpots = maximumFinder.getMaxima(img, detectionThreshold, true);
+        //app.getLogManager().logMessage("Number of spots found with ImageJ : " + newSpots.npoints);
 
         
         // -----------------------------------------
@@ -262,6 +266,7 @@ public class LiveSPTProcessor implements Processor {
             end = System.currentTimeMillis();
             processingTime = end - start;
 
+            // Rendu de l'image à la pipeline
             context.outputImage(image);
             return;
         }
@@ -438,7 +443,7 @@ public class LiveSPTProcessor implements Processor {
         MoleculeDescriptor mDesc = m.descriptor;
         if (mDesc.hasParam("sigma1"))
         {
-            wx = m.values[mDesc.getParamIndex("sigma1")];
+            wx = 2*m.values[mDesc.getParamIndex("sigma1")];
         }
         else
         {
@@ -446,7 +451,7 @@ public class LiveSPTProcessor implements Processor {
         }
         if (mDesc.hasParam("sigma2"))
         {
-            wy = m.values[mDesc.getParamIndex("sigma2")];
+            wy = 2*m.values[mDesc.getParamIndex("sigma2")];
         }
         else
         {
@@ -801,4 +806,18 @@ public class LiveSPTProcessor implements Processor {
         conversionRatio = settings.getInteger("RealSize", 82);
         stageName = settings.getString("StageName", "PIZstage");
     }
+
+    /*private void setThresholds() {
+        SliderConfigWindow frame = new SliderConfigWindow(null, detectionThreshold, ellipseThreshold);
+        frame.setVisible(true);
+        
+        
+        // Image for ellipse threshold
+        ImageProcessor img = app.data().ij().createProcessor(image);
+        img.setThreshold((double)frame.ellipseThreshold, (double)UNSIGNED_SHORT_MAX_VALUE, ImageProcessor.NO_LUT_UPDATE);
+        ByteProcessor mask = img.createMask();
+        mask.fillOutside(zone);
+        image = app.data().ij().createImage(mask, image.getCoords(), image.getMetadata());
+        app.live().displayImage(image);
+    } */
 }
