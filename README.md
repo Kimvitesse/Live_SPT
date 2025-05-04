@@ -14,7 +14,21 @@ LiveSPTPlugin.jar
 
 Open the plugin on Micro-Manager by searching in *Plugin > On the fly image processing*.
 
-Set the parameters with the button *Configure* and let's run your experience ! 
+
+Initialization of the piezoelectric stage:
+Write a BeanShell script in *Tools/Script Panel*, click on a*dd* then *run* to launch the script.
+
+Control of the piezoelectric stage and motorized stage in the Stage Control window:
+click on *Stage*
+
+Starting the live view:
+*Live*, *auto once* (adjusts contrast and gain)
+
+Plugin parameter settings:
+Enter the parameters in the corresponding window using the *configure* button.
+
+Plugin tests:
+Set the piezoelectric stage to 0 and move the motorized stage so that the particles are visible, then start the live view.
 
 
 ## Contributing
